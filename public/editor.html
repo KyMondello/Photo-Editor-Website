@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Editor - Edit</title>
+  <link rel="stylesheet" href="../src/ui/styles/global.css">
+  <link rel="stylesheet" href="../src/ui/styles/editor.css">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">PhotoEdit</div>
+    <span id="auth-status">Login</span>
+  </nav>
+
+  <main class="editor-layout">
+
+    <aside class="toolbar" id="toolbar">
+      <!-- Toolbar buttons get added here, wired to src/tools/ functions -->
+      <button id="tool-flip">Flip</button>
+      <button id="tool-rotate">Rotate</button>
+      <button id="tool-resize">Resize</button>
+      <button id="tool-crop">Crop</button>
+      <button id="tool-lasso">Lasso</button>
+      <button id="tool-color">Color</button>
+      <button id="tool-contrast">Contrast</button>
+      <button id="tool-blur">Blur/Sharpen</button>
+      <button id="tool-filters">Filters</button>
+      <button id="tool-highlighter">Highlighter</button>
+      <button id="tool-undo">Undo</button>
+      <button id="tool-redo">Redo</button>
+    </aside>
+
+    <section class="canvas-area">
+      <div id="upload-prompt">
+        <p>No image loaded yet</p>
+        <label for="image-upload" class="upload-button">Upload Image</label>
+        <input type="file" id="image-upload" accept="image/*" hidden>
+      </div>
+
+      <canvas id="photo-canvas" width="800" height="600"></canvas>
+    </section>
+
+    <aside class="properties-panel" id="properties-panel">
+      <!-- Tool-specific controls (e.g. contrast slider) render here -->
+    </aside>
+
+  </main>
+
+  <script type="module" src="../src/ui/components/canvas.js"></script>
+</body>
+</html>
