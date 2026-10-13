@@ -5,20 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Photo Editor</title>
 	<link rel="stylesheet" 	href="../src/ui/styles/global.css">
-    
+  <script src="https://kit.fontawesome.com/5c85727423.js" crossorigin="anonymous"></script> 
 </head>
 
 <body>
   <nav class="navbar">
-    <div class="logo">PhotoEdit</div>
+    <div class="logo">
+      <i class="fa-solid fa-anchor"></i>
+      AnchorEdit
+    </div>
     <span id="auth-status">Login</span>
   </nav>
 
   <header class="hero">
-    <h1>Edit your photos, right in your browser</h1>
-    <p>Upload, crop, filter, and save — no software required.</p>
-    <a href="editor.html" class="cta-button">Get Started</a>
+    
+    <div class="hero-image">
+      <img src="../src/UI/images/hero-image.jpg" alt="Photo editing illustration">
+      <div class="hero-overlay">
+        <h1>Edit your photos, right in your browser</h1>
+        <p>Upload, crop, filter, and save — no software required.</p>
+      </div>
+    </div>
   </header>
+
+  <section class="get-started">
+    <div class="get-started-card">
+      <h2>New to AnchorEdit?</h2>
+      <p>Jump right in as a guest, or make an account to access your edits anywhere!</p>
+
+      <div class="button-group">
+        <a href="editor.html" class="cta-button">Get Started</a>
+        <a href="register.html" class="cta-button">Register</a>
+      </div>
+    </div>
+    <div class="get-started-card">
+      <h2>Already have an account?</h2>
+      <p>Your edits are waiting for you! Sign in to pick up where you left off.</p>
+      <div class="button-group">
+        <a href="login.html" class="cta-button">Login</a>
+      </div>
+    </div>
+  </section>
+
+    
 
   <footer class="site-footer">
     <p>&copy; 2026 PhotoEdit. Built for CS Software Engineering.</p>
