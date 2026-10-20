@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<head>
+  <title>Supabase Test Page</title>
+  <link rel="stylesheet" href="../UI/styles/global.css">
+</head>
+<body>
+  <h1>Supabase Test Page</h1>
+
+  <p>Current user: TestUser (uuid: 6b776aa8-692d-4050-b356-a8cee8b40149)</p>
+
+  <h3>Upload: </h3>
+
+  <p>Image: </p>
+  <input type="file" id="fileInput" accept="image/*">
+
+  <br>
+
+  <p>Image Id (Blank for new image project):</p>
+  <input type="text" id="imageIdInput">
+
+  <br>
+
+  <p>Image Version:</p>
+  <input type="number" id="imageVersionInput" min="1" value="1">
+
+  <br>
+
+  <button id="uploadButton">Upload</button>
+  <p id="uploadStatus">Ready to upload.</p>
+
+  <br><br>
+  <h3>Download: </h3>
+
+  <p>Image Id:</p>
+  <input type="text" id="downloadIdInput">
+
+  <br>
+
+  <p>Image Version:</p>
+  <input type="number" id="downloadVersionInput" min="1" value="1">
+
+  <br>
+
+  <p>Image Filename:</p>
+  <input type="text" id="downloadNameInput">
+
+  <br>
+  <button id = "downloadButton">Download</button>
+  <p id="downloadStatus">Ready to download.</p>
+  <div id ="downloadPreview"></div>
+
+  <script type="module">
+    import { uploadImage, downloadImage } from "./imageStorage.js";
+
+    const uploadStatus = document.getElementById("uploadStatus");
+    const downloadStatus = document.getElementById("downloadStatus");
+
+    document.getElementById("uploadButton").addEventListener("click", async () => {
+      const file = document.getElementById("fileInput").files[0];
+      const imageId = document.getElementById("imageIdInput").value || null;
+      const version = Number(document.getElementById("imageVersionInput").value);
+
+      if (!file) {
+        uploadStatus.textContent = "Must select an image file to upload.";
+        return;
+      }
+
+      uploadStatus.textContent = "Uploading image...";
+
+      try {
+        const result = await uploadImage(
+          file,
+          file.name,
+          "6b776aa8-692d-4050-b356-a8cee8b40149", //UUID for test user
+          imageId,
+          version
+        );
+
+        if (result) {
+          uploadStatus.textContent = `Upload Successful! Image ID: ${result.imageId}, Version: ${result.version}, Filename: ${file.name}`;
+          document.getElementById("imageIdInput").value = result.imageId;
+          document.getElementById("imageVersionInput").value = result.version;
+
+          document.getElementById("downloadIdInput").value = result.imageId;
+          document.getElementById("downloadVersionInput").value = result.version;
+          document.getElementById("downloadNameInput").value = file.name;
+        } else {
+          uploadStatus.textContent = "Upload failed.";
+        }
+      } catch (error) {
+        console.log(error);
+        uploadStatus.textContent = "Error uploading, see console.";
+      }
+    })
+
+    document.getElementById("downloadButton").addEventListener("click", async () => {
+      const imageId = document.getElementById("downloadIdInput").value;
+      const version = Number(document.getElementById("downloadVersionInput").value);
+      const name = document.getElementById("downloadNameInput").value;
+
+      if (!imageId || !name) {
+        downloadStatus.textContent = "Must enter an image id and filename with extension.";
+        return;
+      }
+
+      downloadStatus.textContent = "Downloading image...";
+
+      try {
+        const result = await downloadImage(
+          "6b776aa8-692d-4050-b356-a8cee8b40149",
+          imageId,
+          version,
+          name
+        );
+
+        if (result) {
+          downloadStatus.textContent = "Image downloaded!";
+          const imageUrl = URL.createObjectURL(result);
+          const img = document.createElement("img");
+          img.src = imageUrl;
+          document.getElementById("downloadPreview").replaceChildren(img);
+        } else {
+          downloadStatus.textContent = "Download failed.";
+        }
+      } catch (error) {
+        console.log(error);
+        downloadStatus.textContent = "Error downloading, see console.";
+      }
+    })
+  </script>
+</body>
