@@ -64,4 +64,6 @@ export function getCurrentImage() {
   return currentImage;
 }
 
+//
+
 initCanvas();

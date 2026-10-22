@@ -6,11 +6,12 @@
   <title>Photo Editor - Edit</title>
   <link rel="stylesheet" href="../src/ui/styles/global.css">
   <link rel="stylesheet" href="../src/ui/styles/editor.css">
+  <script src="https://kit.fontawesome.com/5c85727423.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
   <nav class="navbar">
-    <div class="logo">PhotoEdit</div>
+    <div class="logo">AnchorEdit</div>
     <span id="auth-status">Login</span>
   </nav>
 
@@ -24,12 +25,10 @@
       <button id="tool-crop">Crop</button>
       <button id="tool-lasso">Lasso</button>
       <button id="tool-color">Color</button>
-      <button id="tool-contrast">Contrast</button>
-      <button id="tool-blur">Blur/Sharpen</button>
       <button id="tool-filters">Filters</button>
       <button id="tool-highlighter">Highlighter</button>
-      <button id="tool-undo">Undo</button>
-      <button id="tool-redo">Redo</button>
+      <button id="tool-contrast">Contrast</button>
+      <button id="tool-blur">Blur/Sharpen</button>
     </aside>
 
     <section class="canvas-area">
@@ -44,11 +43,19 @@
 
     <aside class="properties-panel" id="properties-panel">
       <!-- Tool-specific controls (e.g. contrast slider) render here -->
+      <button id="undo-button"><i class="fa-solid fa-arrow-rotate-left"></i>Undo</button>
+      <button id="redo-button"><i class="fa-solid fa-arrow-rotate-right"></i>Redo</button>
+      <div id="tool-controls"></div>
     </aside>
+
+    
+      
+   
+   
 
   </main>
 
-  <script type="module" src="../src/ui/components/canvas.js"></script>
+  
 
   //access to tool js files
   <script type = "module" src="../src/UI/tools/rotate.js"></script>
