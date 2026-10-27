@@ -49,8 +49,33 @@
   <p id="downloadStatus">Ready to download.</p>
   <div id ="downloadPreview"></div>
 
+  <br>
+
+  <h3>Delete Version:</h3>
+  <p>Image Id:</p>
+  <input type="text" id="deleteIdInput">
+
+  <br>
+
+  <p>Image Version:</p>
+  <input type="number" id="deleteVersionInput" min="1" value="1">
+
+  <br>
+
+  <p>Image Filename:</p>
+  <input type="text" id="deleteNameInput">
+
+  <button id="deleteButton">Delete</button>
+  <br><br>
+  <h3>Delete Project:</h3>
+  <p>Image Id:</p>
+  <input type="text" id="deleteProjectIdInput">
+
+  <button id="deleteProjectButton">Delete</button>
+
+
   <script type="module">
-    import { uploadImage, downloadImage } from "./imageStorage.js";
+    import { uploadImage, downloadImage, deleteVersion, deleteImageProject } from "./imageStorage.js";
 
     const uploadStatus = document.getElementById("uploadStatus");
     const downloadStatus = document.getElementById("downloadStatus");
@@ -84,6 +109,10 @@
           document.getElementById("downloadIdInput").value = result.imageId;
           document.getElementById("downloadVersionInput").value = result.version;
           document.getElementById("downloadNameInput").value = file.name;
+          document.getElementById("deleteIdInput").value = result.imageId;
+          document.getElementById("deleteVersionInput").value = result.version;
+          document.getElementById("deleteNameInput").value = file.name;
+          document.getElementById("deleteProjectIdInput").value = result.imageId;
         } else {
           uploadStatus.textContent = "Upload failed.";
         }
@@ -126,6 +155,30 @@
         console.log(error);
         downloadStatus.textContent = "Error downloading, see console.";
       }
+    })
+
+    document.getElementById("deleteButton").addEventListener("click", async () => {
+      const imageId = document.getElementById("deleteIdInput").value;
+      const version = Number(document.getElementById("deleteVersionInput").value);
+      const name = document.getElementById("deleteNameInput").value;
+
+      const result = await deleteVersion(
+        "6b776aa8-692d-4050-b356-a8cee8b40149",
+        imageId,
+        version,
+        name
+      );
+      console.log(result);
+    })
+
+    document.getElementById("deleteProjectButton").addEventListener("click", async () => {
+      const imageId = document.getElementById("deleteProjectIdInput").value;
+
+      const result = await deleteImageProject(
+       "6b776aa8-692d-4050-b356-a8cee8b40149",
+       imageId
+      )
+      console.log(result);
     })
   </script>
 </body>
