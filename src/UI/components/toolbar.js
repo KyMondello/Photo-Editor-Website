@@ -10,7 +10,7 @@ const TOOL_CONTROLS = {
         {key: 'saturation', label: 'Saturation', min: -100, max: 100, value: 0},
     ],
     blur: [
-        {key: 'amount', label: 'Blur', min: 0, max: 100, value: 0}
+        {key: 'blur', label: 'Blur', min: 0, max: 100, value: 0}
     ],
 };
 
