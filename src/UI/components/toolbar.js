@@ -3,7 +3,7 @@
 
 const TOOL_CONTROLS = {
     contrast: [
-        {key: 'contrast', label: 'Contrast', min: -100, max: 100, value: 0},
+        {key: 'contrast', label: 'Contrast', min: -128, max: 128, value: 0},
     ],
     color: [
         {key: 'brightness', label: 'Brightness', min: -100, max: 100, value: 0},

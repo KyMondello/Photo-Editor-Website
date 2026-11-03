@@ -20,6 +20,9 @@ function resize(ratio)
     //used to find center of canvas
     const can = document.getElementById('photo-canvas');
 
+    //preventing unseen by user errors
+    if(!canvas)return;
+
     //center resized image when drawn
     //canvas w/h divided by 2 - image w/h divided by 2 to calculate the center of both
     const x = (can.width/2)-(canvas.width*ratio)/2;
@@ -33,7 +36,7 @@ function resize(ratio)
 
 document.addEventListener('keydown', function (event) 
 {
-    if(event.key === "s")
+    if(event.key === "h")
     {
         resize(1/2);
     }

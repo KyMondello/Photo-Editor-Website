@@ -22,6 +22,8 @@ function crop(ratio)
     //might need this later
     const can = document.getElementById('photo-canvas');
 
+    if(!canvas)return;
+
     //center cropped image when drawn
     const x = (can.width/2)-(canvas.width*ratio)/2;
     const y = (can.height/2)-(canvas.height*ratio)/2;
@@ -46,6 +48,9 @@ function cropCustom(a,b)
 
     //might need this later
     const can = document.getElementById('photo-canvas');
+
+    //preventing unseen by user errors
+    if(!canvas)return;
 
     //center cropped image when drawn
     //canvas w/h divided by 2 - image w/h divided by 2 to calculate the center of both
