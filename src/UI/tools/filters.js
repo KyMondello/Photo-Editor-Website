@@ -15,10 +15,8 @@ document.addEventListener('filter:apply', ({ detail }) => {
     //pixel filters can't be reversed, so turning one off does nothing (use undo)
     if (!detail.active) return;
 
+    //canvas.js fires 'canvas:edited' itself when putImageData is called
     filters(detail.key);
-
-    //putImageData isn't tracked by the canvas proxy, so tell history.js about the edit
-    document.dispatchEvent(new CustomEvent('canvas:edited'));
 });
 
 //filter function

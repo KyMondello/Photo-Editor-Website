@@ -60,6 +60,11 @@ function showToolControls(toolName) {
     sliders.forEach(config => { controls.appendChild(createSlider(toolName, config)); });
 }
 
+document.addEventListener('canvas:loaded', () => {
+  if (activeTool) showToolControls(activeTool);   // rebuild sliders at defaults
+});
+
+
 function createSlider(toolName, {key, label, min, max, step=1, value, unit=''}) {
     const wrapper = document.createElement('label');
     wrapper.className = 'slider-control';

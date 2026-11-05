@@ -35,11 +35,13 @@
       <button id="tool-highlighter"><i class="fa-solid fa-highlighter" ></i>Highlighter</button>
     </aside>
 
+    <input type="file" id="image-upload" accept="image/*" hidden>
+
     <section class="canvas-area">
       <div id="upload-prompt">
         <p>No image loaded yet</p>
         <label for="image-upload" class="upload-button"><i class="fa-solid fa-upload"></i>Upload Image</label>
-        <input type="file" id="image-upload" accept="image/*" hidden>
+        
       </div>
 
       <canvas id="photo-canvas" width="800" height="600"></canvas>
@@ -50,6 +52,10 @@
       <div class="history-controls">
         <button id="undo-button"><i class="fa-solid fa-arrow-rotate-left"></i>Undo</button>
         <button id="redo-button"><i class="fa-solid fa-arrow-rotate-right"></i>Redo</button>
+        <label for="image-upload" class="upload-button" id="change-image">
+          <i class="fa-solid fa-image"></i>Change Image
+        </label>
+
       </div>
 
       <div id="tool-controls"></div>
