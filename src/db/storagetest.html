@@ -73,9 +73,25 @@
 
   <button id="deleteProjectButton">Delete</button>
 
+  <h3>Password Reset: </h3>
+  <p>Username:</p>
+  <input type="text" id="usernameInput">
+  <br>
+  <p>Email:</p>
+  <input type="text" id="emailInput">
+  <button id="resetButton">Reset</button>
+
+  <h3>List image projects</h3>
+  <button id="listButton">List (check console)</button>
+
+  <h3>get latest version</h3>
+  <input type="text" id="versionInput">
+  <button id="versionButton">Get Version</button>
+
 
   <script type="module">
-    import { uploadImage, downloadImage, deleteVersion, deleteImageProject } from "./imageStorage.js";
+    import { uploadImage, downloadImage, deleteVersion, deleteImageProject, listImageProjects, getLatestVersion } from "./imageStorage.js";
+    import { hasMatchingEmail } from "./userQueries.js";
 
     const uploadStatus = document.getElementById("uploadStatus");
     const downloadStatus = document.getElementById("downloadStatus");
@@ -103,16 +119,6 @@
 
         if (result) {
           uploadStatus.textContent = `Upload Successful! Image ID: ${result.imageId}, Version: ${result.version}, Filename: ${file.name}`;
-          document.getElementById("imageIdInput").value = result.imageId;
-          document.getElementById("imageVersionInput").value = result.version;
-
-          document.getElementById("downloadIdInput").value = result.imageId;
-          document.getElementById("downloadVersionInput").value = result.version;
-          document.getElementById("downloadNameInput").value = file.name;
-          document.getElementById("deleteIdInput").value = result.imageId;
-          document.getElementById("deleteVersionInput").value = result.version;
-          document.getElementById("deleteNameInput").value = file.name;
-          document.getElementById("deleteProjectIdInput").value = result.imageId;
         } else {
           uploadStatus.textContent = "Upload failed.";
         }
@@ -178,6 +184,28 @@
        "6b776aa8-692d-4050-b356-a8cee8b40149",
        imageId
       )
+      console.log(result);
+    })
+
+    document.getElementById("resetButton").addEventListener("click", async () => {
+      const username = document.getElementById("usernameInput").value;
+      const email = document.getElementById("emailInput").value;
+
+      const result = await hasMatchingEmail(
+        username,
+        email
+      )
+      console.log(result);
+    })
+
+    document.getElementById("listButton").addEventListener("click", async () => {
+      const result = await listImageProjects("6b776aa8-692d-4050-b356-a8cee8b40149");
+      console.log(result);
+    })
+
+    document.getElementById("versionButton").addEventListener("click", async () => {
+      const imageId = document.getElementById("versionInput").value;
+      const result = await getLatestVersion(imageId);
       console.log(result);
     })
   </script>

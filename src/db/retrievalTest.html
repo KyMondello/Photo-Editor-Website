@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<head>
+  <title>Image Retrieval Test Page</title>
+  <link rel="stylesheet" href="../UI/styles/global.css">
+</head>
+<body>
+  <h1>Image Retrieval Test Page</h1>
+
+  <p>Current user: TestUser</p>
+  <p>Images:</p>
+  <ul id="projectList"></ul>
+  <div id="imagePreview"></div>
+
+  <script type="module">
+    import { uploadImage, downloadImage, deleteVersion, deleteImageProject, listImageProjects } from "./imageStorage.js";
+    
+    window.addEventListener("load", async () => {
+      const response = await listImageProjects("6b776aa8-692d-4050-b356-a8cee8b40149");
+      const projects = response.data;
+      const listElement = document.getElementById("projectList");
+
+      console.log(projects);
+      projects.forEach(project => {
+        const list = document.createElement('li');
+        const button = document.createElement("button");
+        button.textContent = project.file_name;
+
+        button.addEventListener("click", async () => {
+          const result = await downloadImage(
+            "6b776aa8-692d-4050-b356-a8cee8b40149",
+            project.image_id,
+            1,
+            project.file_name
+          );
+          if (!result.success) {
+            return;
+          }
+          console.log(result.data);
+          const imageUrl = URL.createObjectURL(result.data);
+          const preview = document.getElementById("imagePreview");
+          const img = document.createElement("img");
+          img.src = imageUrl;
+          preview.replaceChildren(img);
+
+
+        });
+        list.appendChild(button);
+        listElement.appendChild(list);
+      })
+    });
+  </script>
+</body>
