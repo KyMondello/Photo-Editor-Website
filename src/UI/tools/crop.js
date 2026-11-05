@@ -1,5 +1,5 @@
 //import canvas functions
-import { getCurrentImage } from '../components/canvas.js';
+import { getCanvas, getCurrentImage, snapshotCanvas } from '../components/canvas.js';
 import { getCanvasContext } from '../components/canvas.js';
 
 
@@ -7,64 +7,60 @@ import { getCanvasContext } from '../components/canvas.js';
 const button = document.getElementById('tool-crop');
 
 //link the button to the crop function
-//at the moment, set to shave off a set ratio of image, can be adjusted to whatever you feel like
-//it does need to be int this format: num1/num2
-//can accept decimals though
+//at the moment, set to shave off a set amount from the top-left, can be adjusted to whatever you feel like
 button.addEventListener('click',() =>  cropCustom(500,500));
 
-//crop image using a ratio
+//draw the part of the current canvas starting at (sx, sy) and sw x sh big
+//the canvas shrinks to that size, so the result stacks with rotate/resize/filters
+function cropRegion(sx, sy, sw, sh)
+{
+    const ctx = getCanvasContext();
+    const can = getCanvas();
+
+    //nothing uploaded yet
+    if (!getCurrentImage()) return;
+
+    //copy what is on the canvas now, so earlier edits are kept
+    const src = snapshotCanvas();
+
+    //keep the region inside the canvas and at least 1px big
+    sx = Math.max(0, Math.min(Math.round(sx), src.width - 1));
+    sy = Math.max(0, Math.min(Math.round(sy), src.height - 1));
+    sw = Math.max(1, Math.min(Math.round(sw), src.width - sx));
+    sh = Math.max(1, Math.min(Math.round(sh), src.height - sy));
+
+    //resizing the canvas also clears it
+    can.width = sw;
+    can.height = sh;
+
+    ctx.drawImage(src, sx, sy, sw, sh, 0, 0, sw, sh);
+}
+
+//crop image using a ratio, keeping the center
 function crop(ratio)
 {
-    //Get the current image data from the canvas
-    const canvas = getCurrentImage();
-    const ctx = getCanvasContext();
+    const can = getCanvas();
+    const w = can.width * ratio;
+    const h = can.height * ratio;
 
-    //might need this later
-    const can = document.getElementById('photo-canvas');
-
-    //center cropped image when drawn
-    const x = (can.width/2)-(canvas.width*ratio)/2;
-    const y = (can.height/2)-(canvas.height*ratio)/2;
-
-    
-
-    //clear old pic from canvas, otherwise you'll see the unaltered image
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    //display cropped image
-    ctx.drawImage(canvas, 0,0, canvas.width*ratio ,canvas.height*ratio, x, y, canvas.width*ratio,canvas.height*ratio);
+    cropRegion((can.width - w) / 2, (can.height - h) / 2, w, h);
 }
 
 //crop via custom measurements, as in not using ratios
-//a = start point on x-axis
-//b = start point on y-axis
+//a = how much to cut off the left (x-axis)
+//b = how much to cut off the top (y-axis)
 function cropCustom(a,b)
 {
-    //Get the current image data from the canvas
-    const canvas = getCurrentImage();
-    const ctx = getCanvasContext();
+    const can = getCanvas();
 
-    //might need this later
-    const can = document.getElementById('photo-canvas');
-
-    //center cropped image when drawn
-    //canvas w/h divided by 2 - image w/h divided by 2 to calculate the center of both
-    const x = (can.width/2)-(canvas.width-a)/2;
-    const y = (can.height/2)-(canvas.height-b)/2;
-
-    //clear old pic from canvas, otherwise you'll see the unaltered image
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    //display cropped image
-    ctx.drawImage(canvas, 0,0,a,b, x, y, canvas.width-a,canvas.height-b);
-
+    cropRegion(a, b, can.width - a, can.height - b);
 }
 
 //keyboard shortcuts
 //mostly for testing purposes
 //crop by various ratios
 //testing custom crop amounts
-document.addEventListener('keydown', function (event) 
+document.addEventListener('keydown', function (event)
 {
     if(event.key === "1")
     {
