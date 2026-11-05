@@ -5,22 +5,29 @@
 //more difficult filters: night vision, pastel (maybe)
 
 //import canvas functions
-import { getCurrentImage } from '../components/canvas.js';
+import { getCanvas, getCurrentImage } from '../components/canvas.js';
 import { getCanvasContext } from '../components/canvas.js';
 
 
-//get button element
-const button = document.getElementById('tool-filters');
+//toolbar.js emits 'filter:apply' when a filter button is clicked
+//its button keys are the same names filters() expects (Sepia, Gray, Black&White, ...)
+document.addEventListener('filter:apply', ({ detail }) => {
+    //pixel filters can't be reversed, so turning one off does nothing (use undo)
+    if (!detail.active) return;
 
-//link button and function
-button.addEventListener('click',() => filters('Sepia'));
+    filters(detail.key);
+
+    //putImageData isn't tracked by the canvas proxy, so tell history.js about the edit
+    document.dispatchEvent(new CustomEvent('canvas:edited'));
+});
 
 //filter function
 //pass a name in to determine the filter
 function filters(usrInput)
 {
     //Get the current image data from the canvas
-    const canvas = getCurrentImage();
+    //use the canvas (not the original image) so rotate/crop/resize sizes are respected
+    const canvas = getCanvas();
     const ctx = getCanvasContext();
 
     //might need access to canvas itself

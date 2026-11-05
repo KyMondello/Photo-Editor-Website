@@ -16,26 +16,26 @@ const TOOL_CONTROLS = {
 
 const FILTER_OPTIONS = [
     
-    {key: 'sepia', label: 'Sepia'},
+    {key: 'Sepia', label: 'Sepia'},
 
     
-    {key: 'blackWhite', label: 'Black and White'},
+    {key: 'Black&White', label: 'Black and White'},
     
     
-    {key: 'grey', label: 'Grey'},
+    {key: 'Gray', label: 'Grey'},
     
     
-    {key: 'nightVision', label: 'Night Vision'},
+    {key: 'NightVision', label: 'Night Vision'},
     
     
-    {key:'warm', label:'Warm'},
+    {key:'Warm', label:'Warm'},
     
-    
-    {key:'cool', label:'Cool'}
+    {key:'Cool', label:'Cool'}
 ]
 
 const controls = document.getElementById('tool-controls');
 let activeTool = null;
+let activeFilter = null; // Track the currently active filter (shared by all filter buttons)
 
 function showToolControls(toolName) {
     activeTool = toolName;
@@ -96,14 +96,14 @@ function createFilterButton(toolName, {key,label}) {
     button.className = 'filter-button';
     button.textContent = label;
     button.dataset.tool = toolName;
-    button.key = key;
-    button.classList.toggle('click', () => {
-        //clicking activve filter a second time turns it off
-        acviteFilter = (activeFilter === key) ? null : key;
+    button.dataset.key = key;
+    button.addEventListener('click', () => {
+        //filters change the pixels permanently, so every click applies (undo reverts)
+        activeFilter = key;
         controls.querySelectorAll('.filter-button').forEach(b =>
             b.classList.toggle('active', b.dataset.key === activeFilter));
         document.dispatchEvent(new CustomEvent('filter:apply', {
-            detail: {tool: toolName, key, active: activeFilter === key}
+            detail: {tool: toolName, key, active: true}
         }));
     });
     return button;
