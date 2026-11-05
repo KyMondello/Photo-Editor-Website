@@ -54,9 +54,20 @@
   text-align: center;
 }
 
+.toolbar button img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
 .toolbar button:hover {
   background-color: var(--primary-color, #4a90e2);
   color: #fff;
+}
+
+.toolbar button:hover img,
+.toolbar button.active img {
+  filter: invert(1);
 }
 
 #toolbar button.active { 
