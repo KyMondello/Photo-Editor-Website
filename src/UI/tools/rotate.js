@@ -1,7 +1,7 @@
 //attempt 2
 
 //import canvas functions
-import { getCurrentImage } from '../components/canvas.js';
+import { getCanvas, getCurrentImage, snapshotCanvas } from '../components/canvas.js';
 import { getCanvasContext } from '../components/canvas.js';
 
 
@@ -18,33 +18,24 @@ button.addEventListener('click', () => rotate(90));
 //rotate the other way by using negative degrees
 function rotate(degrees) {
 
-    //Get the current image data from the canvas
-    const img = getCurrentImage();
     const ctx = getCanvasContext();
-
-    //might need access to canvas itself
-    const can = document.getElementById('photo-canvas');
+    const can = getCanvas();
 
     //nothing uploaded yet
-    if (!img) return;
+    if (!getCurrentImage()) return;
+
+    //copy what is on the canvas now, so earlier crop/resize/filter edits are kept
+    const src = snapshotCanvas();
 
     //convert degrees to radians
     const rad = degrees * Math.PI / 180;
     const sin = Math.abs(Math.sin(rad));
     const cos = Math.abs(Math.cos(rad));
 
-    //size of the box the rotated image needs (using the image's real size)
-    const rotW = img.width * cos + img.height * sin;
-    const rotH = img.width * sin + img.height * cos;
-
-    //scale down to the same max width canvas.js uses
-    const maxWidth = 800;
-    const scale = Math.min(1, maxWidth / rotW);
-
-    //resize canvas to fit the rotated image
+    //resize canvas to fit the rotated image (full resolution, CSS scales it on screen)
     //(setting width/height also clears the canvas and resets ctx)
-    can.width = rotW * scale;
-    can.height = rotH * scale;
+    can.width = Math.round(src.width * cos + src.height * sin);
+    can.height = Math.round(src.width * sin + src.height * cos);
 
     //save unchanged ctx
     ctx.save();
@@ -55,10 +46,8 @@ function rotate(degrees) {
     //rotate using radians
     ctx.rotate(rad);
 
-    //draw image at its scaled size, centered on the rotation point
-    const drawW = img.width * scale;
-    const drawH = img.height * scale;
-    ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+    //draw the snapshot centered on the rotation point
+    ctx.drawImage(src, -src.width / 2, -src.height / 2);
 
     //restore ctx
     ctx.restore();

@@ -27,3 +27,7 @@ document.addEventListener('tool:input', ({ detail }) => {
 
   setValues({ [key]: detail.value });   // live preview
 });
+
+document.addEventListener('canvas:loaded', () => {
+  setValues({ brightness: 0, saturation: 0, contrast: 0, blur: 0 });
+});

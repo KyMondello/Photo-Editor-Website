@@ -10,6 +10,12 @@ const uploadPrompt = document.getElementById('upload-prompt');
 // (crop, rotate, filters, etc.) can reference it later
 let currentImage = null;
 
+// True once the user has changed the image, so we only warn when something would be lost
+let hasEdits = false;
+document.addEventListener('canvas:edited', () => { hasEdits = true; });   // crop, rotate, resize, filters
+document.addEventListener('tool:change', () => { hasEdits = true; });     // slider released
+
+
 function initCanvas() {
   uploadInput.addEventListener('change', handleImageUpload);
 }
@@ -18,6 +24,14 @@ function handleImageUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
 
+  //Ask before replacing an image if the user has made edits to the current one
+  if (currentImage && hasEdits &&
+      !confirm('Replace the current image? Unsaved edits will be lost.')) {
+    event.target.value = '';   // cancelled: clear the picker so the same file can be chosen again
+    return;
+  }
+  
+
   const reader = new FileReader();
 
   reader.onload = (e) => {
@@ -25,6 +39,7 @@ function handleImageUpload(event) {
 
     img.onload = () => {
       currentImage = img;
+      hasEdits = false;   // new image, no edits yet
       drawImageToCanvas(img);
       showCanvas();
       // history.js listens for this to reset the undo/redo stacks
@@ -35,6 +50,7 @@ function handleImageUpload(event) {
   };
 
   reader.readAsDataURL(file);
+  event.target.value = ''; // Reset the input so the same file can be re-uploaded if needed
 }
 
 function drawImageToCanvas(img) {
@@ -76,7 +92,7 @@ const toolCtx = new Proxy(ctx, {
     // Canvas methods must run with the real context as `this`
     return (...args) => {
       const result = value.apply(target, args);
-      if (prop === 'drawImage') notifyEdited();
+      if (prop === 'drawImage' || prop === 'putImageData') notifyEdited();
       return result;
     };
   },
@@ -95,6 +111,17 @@ export function getCanvasContext() {
 
 export function getCurrentImage() {
   return currentImage;
+}
+
+// Copy of whatever is on the canvas right now (all earlier edits included).
+// Tools that change the canvas size (rotate, crop, resize) draw from this
+// instead of the original upload, so their edits stack.
+export function snapshotCanvas() {
+  const copy = document.createElement('canvas');
+  copy.width = canvas.width;
+  copy.height = canvas.height;
+  copy.getContext('2d').drawImage(canvas, 0, 0);
+  return copy;
 }
 
 export function getCanvas() {
