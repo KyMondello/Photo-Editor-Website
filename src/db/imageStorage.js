@@ -1,3 +1,7 @@
+/**
+ * @file Provides queries to interact with Supabase database and storage buckets.
+ */
+
 import supabaseClient from "./supabase.js";
 import { success, failure, handleResponse } from "./helpers.js"
 
