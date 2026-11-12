@@ -4,6 +4,10 @@
 import { getCurrentImage } from '../components/canvas.js';
 import { getCanvasContext } from '../components/canvas.js';
 
+//Get the current image data from the canvas
+    const canvas = getCurrentImage();
+    const ctx = getCanvasContext();
+
 
 //keeping track of xy coordinates
 //idea is to use these for figuring out the selected area's...area
@@ -15,59 +19,88 @@ import { getCanvasContext } from '../components/canvas.js';
 //get button element
 const button = document.getElementById('tool-lasso');
 
- var clicked = 0;
-
 //link button and function
-button.addEventListener('click', () => lasso(10));
+button.addEventListener('click', () => lassoSelect(200, 200, 400, 400));
+
+function lassoSelect(startX, startY, endX, endY)
+{
+    const canvas = getCurrentImage();
+    const ctx = getCanvasContext();
+
+    
+        //CHANGE LATER
+        ctx.strokeStyle = 'red';
+        ctx.setLineDash([5, 3]);
+        ctx.lineDashOffset = 2;
+        ctx.lineWidth = 4;
+
+        ctx.beginPath();
+        ctx.rect(startX, startY, (endX-startX), (endY-startY));
+        ctx.clip();
+        
+
+        //draw from start coordinates to end coordinates
+        //width and height are calculated by subtracting start coordinates from end coordinates
+        ctx.strokeRect(startX, startY, endX-startX, endY-startY);
+
+        //reset line dash to solid
+        //otherwise highlighter will have dashes
+        ctx.setLineDash([]);
+
+    
+
+        
+
+
+}
 
 //what it needs to do:
 //select based on mouse
 //pass mouse start coordinates in, pass in path mouse took?
 //have visual indication of the tool being active
 //two modes, rectangle and mouse cursor
-function lasso(val)
+function lasso()
 {
-
-    //keep track of if lasso button has been clicked (probably better way to do this)
-    clicked = clicked + 1;
-
-    //Get the current image data from the canvas
-    const canvas = getCurrentImage();
-    const ctx = getCanvasContext();
-
     if(!canvas)return;
 
-    //odd number clicks
-    if(clicked % 2 != 0)
-    {
-        console.log('test');
-        console.log(clicked);
-
-    }
-
-    //even number clicks
-    else
-    {
-        console.log('other test');
-        console.log(clicked);
-    }
-
+    //testing purposes
+    lassoSelect(100, 100, 200, 200);
     
+
 }
 
 //track mouse movement for X & Y coordinates
-   document.addEventListener('mousemove', function (event) 
+//use mousemove to constant spawn more rectangles
+//mousedown ot click to spawn one at a time
+
+
+/*
+//REMINDER: move into function at some point
+   document.addEventListener('click', function (event) 
 {
-    if(event.shiftKey)
+    //get starting coordinates
+    if(event.escapeKey)
     {
         //set vars to current coordinates
         startX = event.clientX;
         startY = event.clientY;
 
-        //check if what's there makes sense
-        console.log('X:')
-        console.log(startX);
-        console.log('Y:')
-        console.log(startY);
     }
-})
+
+    //get end coordinates
+    else if(event.tabKey)
+    {
+        
+        //set vars to current coordinates
+        endX = event.clientX;
+        endY = event.clientY;
+
+        lassoSelect(startX, startY, endX, endY);
+    
+    }
+
+
+
+    
+
+}) */
