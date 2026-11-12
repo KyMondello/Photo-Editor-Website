@@ -4,11 +4,11 @@ import { getCanvasContext } from '../components/canvas.js';
 
 
 //get button element
-const button = document.getElementById('tool-crop');
+//const button = document.getElementById('tool-crop');
 
 //link the button to the crop function
 //at the moment, set to shave off a set amount from the top-left, can be adjusted to whatever you feel like
-button.addEventListener('click',() =>  cropCustom(500,500));
+//button.addEventListener('click',() =>  cropCustom(500,500));
 
 //draw the part of the current canvas starting at (sx, sy) and sw x sh big
 //the canvas shrinks to that size, so the result stacks with rotate/resize/filters
@@ -46,6 +46,21 @@ function crop(ratio)
     cropRegion((can.width - w) / 2, (can.height - h) / 2, w, h);
 }
 
+// Crop using aspect ratios (ex: a square and a phone screen-shaped crop)
+function cropAspect(aw,ah)
+{
+    const can = getCanvas();
+    const targetRatio = aw / ah;
+    let w = can.width;
+    let h = can.height;
+
+    //too wide: trim sides, too tall: trim top/bottom
+    if(w/h > targetRatio) w = h * targetRatio;
+    else h = w / targetRatio;
+
+    cropRegion((can.width - w) / 2, (can.height - h) / 2, w, h);
+}
+
 //crop via custom measurements, as in not using ratios
 //a = how much to cut off the left (x-axis)
 //b = how much to cut off the top (y-axis)
@@ -56,10 +71,23 @@ function cropCustom(a,b)
     cropRegion(a, b, can.width - a, can.height - b);
 }
 
+//toolbar.js emits 'crop:apply' when a crop button is clicked
+document.addEventListener('crop:apply', ({detail}) => {
+    if (detail.ratio) {
+        crop(detail.ratio);
+    }
+    if (detail.aspect) {
+        cropAspect(detail.aspect.w, detail.aspect.h);
+    }
+});
+
+
+
 //keyboard shortcuts
 //mostly for testing purposes
 //crop by various ratios
 //testing custom crop amounts
+/*
 document.addEventListener('keydown', function (event)
 {
     if(event.key === "1")
@@ -97,3 +125,4 @@ document.addEventListener('keydown', function (event)
 
 }
 );
+*/
