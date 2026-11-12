@@ -9,9 +9,15 @@
   <p>Current user: TestUser</p>
   <p>Images:</p>
   <ul id="projectList"></ul>
+  <br>
+  <h3>Image Preview:</h3>
   <div id="imagePreview"></div>
+  <button id="downloadButton">Download Project</button>
 
   <script type="module">
+    const testUser = "6b776aa8-692d-4050-b356-a8cee8b40149";
+    let selectedProject = null;
+
     import { uploadImage, downloadImage, deleteVersion, deleteImageProject, listImageProjects } from "./imageStorage.js";
     
     window.addEventListener("load", async () => {
@@ -36,6 +42,7 @@
             return;
           }
           console.log(result.data);
+          selectedProject = { id: project.image_id,  filename: project.file_name };
           const imageUrl = URL.createObjectURL(result.data);
           const preview = document.getElementById("imagePreview");
           const img = document.createElement("img");
@@ -48,5 +55,35 @@
         listElement.appendChild(list);
       })
     });
+
+  document.getElementById("downloadButton").addEventListener("click", async () => {
+    if (!selectedProject) {
+      alert("Please select a project first.");
+      return;
+    }
+
+    const result = await downloadImage(
+      testUser,
+      selectedProject.id,
+      1,
+      selectedProject.filename
+    );
+
+    if (!result.success) {
+      alert("Download failed.");
+      return;
+    }
+
+    const url = URL.createObjectURL(result.data);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = selectedProject.filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+  });
   </script>
 </body>

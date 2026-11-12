@@ -148,12 +148,14 @@
           name
         );
 
-        if (result) {
+        if (result.success) {
           downloadStatus.textContent = "Image downloaded!";
-          const imageUrl = URL.createObjectURL(result);
+          const imageUrl = URL.createObjectURL(result.data);
           const img = document.createElement("img");
           img.src = imageUrl;
           document.getElementById("downloadPreview").replaceChildren(img);
+
+        console.log(result.data);
         } else {
           downloadStatus.textContent = "Download failed.";
         }
@@ -161,6 +163,7 @@
         console.log(error);
         downloadStatus.textContent = "Error downloading, see console.";
       }
+
     })
 
     document.getElementById("deleteButton").addEventListener("click", async () => {
