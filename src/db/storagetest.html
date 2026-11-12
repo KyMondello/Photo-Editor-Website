@@ -88,10 +88,33 @@
   <input type="text" id="versionInput">
   <button id="versionButton">Get Version</button>
 
+  
+  <h3>Create User</h3>
+  <p>Username:</p>
+  <input type="text" id="create_usernameInput">
+  <br>
+  <p>email:</p>
+  <input type="text" id="create_emailInput">
+  <br>
+  <p>password</p>
+  <input type="text" id="create_hashedInput">
+  <button id="create">Create User</button>
+
+  <h3>Find by username</h3>
+  <p>Username:</p>
+  <input type="text" id="findU_usernameInput">
+  <button id="findU">Find by Username</button>
+
+  <h3>Find by email</h3>
+  <p>email:</p>
+  <input type="text" id="findE_emailInput">
+  <button id="findE">Find by Email</button>
+
+
 
   <script type="module">
     import { uploadImage, downloadImage, deleteVersion, deleteImageProject, listImageProjects, getLatestVersion } from "./imageStorage.js";
-    import { hasMatchingEmail } from "./userQueries.js";
+    import { hasMatchingEmail, createUser, findUserByUsername, findUserByEmail } from "./userQueries.js";
 
     const uploadStatus = document.getElementById("uploadStatus");
     const downloadStatus = document.getElementById("downloadStatus");
@@ -210,6 +233,26 @@
       const imageId = document.getElementById("versionInput").value;
       const result = await getLatestVersion(imageId);
       console.log(result);
+    })
+
+    //User queries
+    document.getElementById("create").addEventListener("click", async () => {
+      const username = document.getElementById("create_usernameInput").value;
+      const email = document.getElementById("create_emailInput").value;
+      const hashed_password = document.getElementById("create_hashedInput").value;
+
+      const result = await createUser(username, email, hashed_password); // fix
+      alert(result);
+    })
+    document.getElementById("findE").addEventListener("click", async () => {
+      const email = document.getElementById("findE_emailInput").value;
+      const result = await findUserByEmail(email);
+      alert(result);
+    })
+    document.getElementById("findU").addEventListener("click", async () => {
+      const username = document.getElementById("findU_usernameInput").value;
+      const result = await findUserByUsername(username);
+      alert(result);
     })
   </script>
 </body>

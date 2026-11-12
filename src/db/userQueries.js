@@ -20,4 +20,40 @@ export async function hasMatchingEmail(username, email) {
   return data.length > 0;
 }
 
+export async function createUser(username, email, hashedPassword) {
+  const userId = crypto.randomUUID();
+  const { data, error } = await supabaseClient
+    .from("users")
+    .insert({
+      id: userId,
+      username: username,
+      email: email,
+      hashed_password: hashedPassword
+    });
+  if (error) return false;
+  return true;
+}
+
+export async function findUserByUsername(username) {
+  const { error } = await supabaseClient
+    .from("users")
+    .select('username')
+    .eq('username', username)
+    .limit(1)
+    .single();
+  if (error) return false;
+  return true;
+}
+
+export async function findUserByEmail(email) {
+  const { error } = await supabaseClient
+    .from("users")
+    .select('email')
+    .eq('email', email)
+    .limit(1)
+    .single();
+  if (error) return false;
+  return true;
+}
+
 
