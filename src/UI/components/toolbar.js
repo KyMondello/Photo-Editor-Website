@@ -33,6 +33,21 @@ const FILTER_OPTIONS = [
     {key:'Cool', label:'Cool'}
 ]
 
+const CROP_OPTIONS = [
+    {key: '1/1', label: 'Square (1:1)', aspect: {w: 1, h: 1}},
+    {key: '9/16', label: 'Phone Screen (9:16)', aspect: {w: 9, h: 16}},
+    {key: '3/4', label: 'Portrait (3:4)', aspect: {w: 3, h: 4}},
+    {key: '4/3', label: 'Landscape (4:3)', aspect: {w: 4, h: 3}},
+    {key: '16/9', label: 'Widescreen (16:9)', aspect: {w: 16, h: 9}},
+    {key: '9/10', label: 'Trim Edges (90%)', ratio: 9/10},
+    {key: '3/4', label: 'Light Crop (75%)', ratio: 3/4},
+    {key: '2/3', label: 'Medium Crop (66%)', ratio: 2/3},
+    {key: '1/2', label: 'Tight Crop (50%)', ratio: 1/2},
+    {key: '1/3', label: 'Close-up (33%)', ratio: 1/3},
+    
+];
+
+
 const controls = document.getElementById('tool-controls');
 let activeTool = null;
 let activeFilter = null; // Track the currently active filter (shared by all filter buttons)
@@ -48,6 +63,11 @@ function showToolControls(toolName) {
 
     if(toolName === 'filters'){
         FILTER_OPTIONS.forEach(config => controls.appendChild(createFilterButton(toolName, config)));
+        return;
+    }
+
+    if(toolName === 'crop'){
+        CROP_OPTIONS.forEach(config => controls.appendChild(createCropButton(toolName, config)));
         return;
     }
 
@@ -113,6 +133,23 @@ function createFilterButton(toolName, {key,label}) {
     });
     return button;
 }
+
+function createCropButton(toolName, {key, label, ratio, aspect}) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'filter-button';
+    button.textContent = label;
+    button.dataset.tool = toolName;
+    button.dataset.key = key;
+    button.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('crop:apply', {
+            detail: {tool: toolName, key, ratio, aspect}
+        }));
+    });
+    return button;
+}
+
+
 function emit(eventName, tool, key, value) {
     document.dispatchEvent(new CustomEvent(eventName, { detail: { tool, key, value: Number(value) } }));
 }
