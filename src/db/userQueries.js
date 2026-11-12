@@ -56,4 +56,14 @@ export async function findUserByEmail(email) {
   return true;
 }
 
+export async function updatePassword(userId, hashedPassword) {
+  const { data, error } = await supabaseClient
+    .from("users")
+    .update({ hashed_password: hashedPassword })
+    .eq('id', userId)
+    .select();
+  if (error) return false;
+  return true;
+}
+
 

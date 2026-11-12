@@ -110,11 +110,16 @@
   <input type="text" id="findE_emailInput">
   <button id="findE">Find by Email</button>
 
-
+  <h3>Update Password</h3>
+  <p>id:</p>
+  <input type="text" id="update_idInput">
+  <p>hashed_password:</p>
+  <input type="text" id="update_hashedInput">
+  <button id="update">update password</button>
 
   <script type="module">
     import { uploadImage, downloadImage, deleteVersion, deleteImageProject, listImageProjects, getLatestVersion } from "./imageStorage.js";
-    import { hasMatchingEmail, createUser, findUserByUsername, findUserByEmail } from "./userQueries.js";
+    import { hasMatchingEmail, createUser, findUserByUsername, findUserByEmail, updatePassword } from "./userQueries.js";
 
     const uploadStatus = document.getElementById("uploadStatus");
     const downloadStatus = document.getElementById("downloadStatus");
@@ -252,6 +257,12 @@
     document.getElementById("findU").addEventListener("click", async () => {
       const username = document.getElementById("findU_usernameInput").value;
       const result = await findUserByUsername(username);
+      alert(result);
+    })
+    document.getElementById("update").addEventListener("click", async () => {
+      const id = document.getElementById("update_idInput").value;
+      const hash = document.getElementById("update_hashedInput").value;
+      const result = await updatePassword(id,hash);
       alert(result);
     })
   </script>
