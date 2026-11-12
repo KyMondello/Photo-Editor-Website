@@ -15,7 +15,22 @@
     <div class="logo">
     <span id="home-link"><a href="index.html" class="home-link"><i class="fa-solid fa-anchor"></i>Anchor Edit</i></a></span>
     </div>
-    <span id="auth-status"><a href="login.html" class="login-button"><i class="fa-solid fa-user"></i>Login</a></span>
+    <div class="auth-status">
+      <a href="login.html" class="login-button"><i class="fa-solid fa-user"></i>Login</a>
+
+      <div class="account-menu" id="account-menu" hidden>
+        <button id="account-toggle" aria-haspopup="true" aria-expanded="false">
+          <i class="fa-solid fa-user"></i>
+          <span id="account-username"></span>
+          <i class="fa-solid fa-caret-down"></i>
+        </button>
+        <ul class="accont-dropdown" id="account-dropdown" hidden>
+          <li><button id = "menu-load">Load Saved Image</button></li>
+          <li><button id = "menu-save">Save Image to Account</button></li>
+          <li><button id="menu-logout">Logout</button></li>
+        </ul>
+      </div>
+    </div>
   </nav>
 
   <main class="editor-layout">
@@ -74,6 +89,8 @@
 
   </main>
 
+
+// Scripts for editor functions
   <script type="module" src="../src/UI/components/canvas.js"></script>
   <script type = "module" src="../src/UI/tools/rotate.js"></script>
   <script type = "module" src="../src/UI/tools/crop.js"></script>
@@ -83,6 +100,7 @@
   <script type="module" src="../src/UI/components/history.js"></script>
   <script type="module" src="../src/UI/tools/filters.js"></script>
   <script type="module" src="../src/UI/components/adjustments.js"></script>
+  <script type="module" src="../src/UI/components/accountMenu.js"></script>
 
 </body>
 </html>
