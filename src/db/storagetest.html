@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<head>
+  <title>Supabase Test Page</title>
+  <link rel="stylesheet" href="../UI/styles/global.css">
+</head>
+<body>
+  <h1>Supabase Test Page</h1>
+
+  <p>Current user: TestUser (uuid: 6b776aa8-692d-4050-b356-a8cee8b40149)</p>
+
+  <h3>Upload: </h3>
+
+  <p>Image: </p>
+  <input type="file" id="fileInput" accept="image/*">
+
+  <br>
+
+  <p>Image Id (Blank for new image project):</p>
+  <input type="text" id="imageIdInput">
+
+  <br>
+
+  <p>Image Version:</p>
+  <input type="number" id="imageVersionInput" min="1" value="1">
+
+  <br>
+
+  <button id="uploadButton">Upload</button>
+  <p id="uploadStatus">Ready to upload.</p>
+
+  <br><br>
+  <h3>Download: </h3>
+
+  <p>Image Id:</p>
+  <input type="text" id="downloadIdInput">
+
+  <br>
+
+  <p>Image Version:</p>
+  <input type="number" id="downloadVersionInput" min="1" value="1">
+
+  <br>
+
+  <p>Image Filename:</p>
+  <input type="text" id="downloadNameInput">
+
+  <br>
+  <button id = "downloadButton">Download</button>
+  <p id="downloadStatus">Ready to download.</p>
+  <div id ="downloadPreview"></div>
+
+  <br>
+
+  <h3>Delete Version:</h3>
+  <p>Image Id:</p>
+  <input type="text" id="deleteIdInput">
+
+  <br>
+
+  <p>Image Version:</p>
+  <input type="number" id="deleteVersionInput" min="1" value="1">
+
+  <br>
+
+  <p>Image Filename:</p>
+  <input type="text" id="deleteNameInput">
+
+  <button id="deleteButton">Delete</button>
+  <br><br>
+  <h3>Delete Project:</h3>
+  <p>Image Id:</p>
+  <input type="text" id="deleteProjectIdInput">
+
+  <button id="deleteProjectButton">Delete</button>
+
+  <h3>Password Reset: </h3>
+  <p>Username:</p>
+  <input type="text" id="usernameInput">
+  <br>
+  <p>Email:</p>
+  <input type="text" id="emailInput">
+  <button id="resetButton">Reset</button>
+
+  <h3>List image projects</h3>
+  <button id="listButton">List (check console)</button>
+
+  <h3>get latest version</h3>
+  <input type="text" id="versionInput">
+  <button id="versionButton">Get Version</button>
+
+  
+  <h3>Create User</h3>
+  <p>Username:</p>
+  <input type="text" id="create_usernameInput">
+  <br>
+  <p>email:</p>
+  <input type="text" id="create_emailInput">
+  <br>
+  <p>password</p>
+  <input type="text" id="create_hashedInput">
+  <button id="create">Create User</button>
+
+  <h3>Find by username</h3>
+  <p>Username:</p>
+  <input type="text" id="findU_usernameInput">
+  <button id="findU">Find by Username</button>
+
+  <h3>Find by email</h3>
+  <p>email:</p>
+  <input type="text" id="findE_emailInput">
+  <button id="findE">Find by Email</button>
+
+  <h3>Update Password</h3>
+  <p>id:</p>
+  <input type="text" id="update_idInput">
+  <p>hashed_password:</p>
+  <input type="text" id="update_hashedInput">
+  <button id="update">update password</button>
+
+  <script type="module">
+    import { uploadImage, downloadImage, deleteVersion, deleteImageProject, listImageProjects, getLatestVersion } from "./imageStorage.js";
+    import { hasMatchingEmail, createUser, findUserByUsername, findUserByEmail, updatePassword } from "./userQueries.js";
+
+    const uploadStatus = document.getElementById("uploadStatus");
+    const downloadStatus = document.getElementById("downloadStatus");
+
+    document.getElementById("uploadButton").addEventListener("click", async () => {
+      const file = document.getElementById("fileInput").files[0];
+      const imageId = document.getElementById("imageIdInput").value || null;
+      const version = Number(document.getElementById("imageVersionInput").value);
+
+      if (!file) {
+        uploadStatus.textContent = "Must select an image file to upload.";
+        return;
+      }
+
+      uploadStatus.textContent = "Uploading image...";
+
+      try {
+        const result = await uploadImage(
+          file,
+          file.name,
+          "6b776aa8-692d-4050-b356-a8cee8b40149", //UUID for test user
+          imageId,
+          version
+        );
+
+        if (result) {
+          uploadStatus.textContent = `Upload Successful! Image ID: ${result.imageId}, Version: ${result.version}, Filename: ${file.name}`;
+        } else {
+          uploadStatus.textContent = "Upload failed.";
+        }
+      } catch (error) {
+        console.log(error);
+        uploadStatus.textContent = "Error uploading, see console.";
+      }
+    })
+
+    document.getElementById("downloadButton").addEventListener("click", async () => {
+      const imageId = document.getElementById("downloadIdInput").value;
+      const version = Number(document.getElementById("downloadVersionInput").value);
+      const name = document.getElementById("downloadNameInput").value;
+
+      if (!imageId || !name) {
+        downloadStatus.textContent = "Must enter an image id and filename with extension.";
+        return;
+      }
+
+      downloadStatus.textContent = "Downloading image...";
+
+      try {
+        const result = await downloadImage(
+          "6b776aa8-692d-4050-b356-a8cee8b40149",
+          imageId,
+          version,
+          name
+        );
+
+        if (result.success) {
+          downloadStatus.textContent = "Image downloaded!";
+          const imageUrl = URL.createObjectURL(result.data);
+          const img = document.createElement("img");
+          img.src = imageUrl;
+          document.getElementById("downloadPreview").replaceChildren(img);
+
+        console.log(result.data);
+        } else {
+          downloadStatus.textContent = "Download failed.";
+        }
+      } catch (error) {
+        console.log(error);
+        downloadStatus.textContent = "Error downloading, see console.";
+      }
+
+    })
+
+    document.getElementById("deleteButton").addEventListener("click", async () => {
+      const imageId = document.getElementById("deleteIdInput").value;
+      const version = Number(document.getElementById("deleteVersionInput").value);
+      const name = document.getElementById("deleteNameInput").value;
+
+      const result = await deleteVersion(
+        "6b776aa8-692d-4050-b356-a8cee8b40149",
+        imageId,
+        version,
+        name
+      );
+      console.log(result);
+    })
+
+    document.getElementById("deleteProjectButton").addEventListener("click", async () => {
+      const imageId = document.getElementById("deleteProjectIdInput").value;
+
+      const result = await deleteImageProject(
+       "6b776aa8-692d-4050-b356-a8cee8b40149",
+       imageId
+      )
+      console.log(result);
+    })
+
+    document.getElementById("resetButton").addEventListener("click", async () => {
+      const username = document.getElementById("usernameInput").value;
+      const email = document.getElementById("emailInput").value;
+
+      const result = await hasMatchingEmail(
+        username,
+        email
+      )
+      console.log(result);
+    })
+
+    document.getElementById("listButton").addEventListener("click", async () => {
+      const result = await listImageProjects("6b776aa8-692d-4050-b356-a8cee8b40149");
+      console.log(result);
+    })
+
+    document.getElementById("versionButton").addEventListener("click", async () => {
+      const imageId = document.getElementById("versionInput").value;
+      const result = await getLatestVersion(imageId);
+      console.log(result);
+    })
+
+    //User queries
+    document.getElementById("create").addEventListener("click", async () => {
+      const username = document.getElementById("create_usernameInput").value;
+      const email = document.getElementById("create_emailInput").value;
+      const hashed_password = document.getElementById("create_hashedInput").value;
+
+      const result = await createUser(username, email, hashed_password); // fix
+      alert(result);
+    })
+    document.getElementById("findE").addEventListener("click", async () => {
+      const email = document.getElementById("findE_emailInput").value;
+      const result = await findUserByEmail(email);
+      alert(result);
+    })
+    document.getElementById("findU").addEventListener("click", async () => {
+      const username = document.getElementById("findU_usernameInput").value;
+      const result = await findUserByUsername(username);
+      alert(result);
+    })
+    document.getElementById("update").addEventListener("click", async () => {
+      const id = document.getElementById("update_idInput").value;
+      const hash = document.getElementById("update_hashedInput").value;
+      const result = await updatePassword(id,hash);
+      alert(result);
+    })
+  </script>
+</body>
