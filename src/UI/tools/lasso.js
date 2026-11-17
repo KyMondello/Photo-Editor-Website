@@ -2,6 +2,7 @@
 
 //import canvas functions
 import { getCurrentImage } from '../components/canvas.js';
+import { snapshotCanvas } from '../components/canvas.js';
 import { getCanvasContext } from '../components/canvas.js';
 
 //Get the current image data from the canvas
@@ -20,20 +21,22 @@ import { getCanvasContext } from '../components/canvas.js';
 const button = document.getElementById('tool-lasso');
 
 //link button and function
-button.addEventListener('click', () => lassoSelect(200, 200, 400, 400));
+button.addEventListener('click', () => lassoSelect(200, 200, 400, 600));
 
 function lassoSelect(startX, startY, endX, endY)
 {
     const canvas = getCurrentImage();
     const ctx = getCanvasContext();
 
-    
+        var copy = snapshotCanvas();
+
         //CHANGE LATER
         ctx.strokeStyle = 'red';
         ctx.setLineDash([5, 3]);
         ctx.lineDashOffset = 2;
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 8;
 
+        //early test
         ctx.beginPath();
         ctx.rect(startX, startY, (endX-startX), (endY-startY));
         ctx.clip();
@@ -47,8 +50,6 @@ function lassoSelect(startX, startY, endX, endY)
         //otherwise highlighter will have dashes
         ctx.setLineDash([]);
 
-    
-
         
 
 
@@ -58,7 +59,6 @@ function lassoSelect(startX, startY, endX, endY)
 //select based on mouse
 //pass mouse start coordinates in, pass in path mouse took?
 //have visual indication of the tool being active
-//two modes, rectangle and mouse cursor
 function lasso()
 {
     if(!canvas)return;

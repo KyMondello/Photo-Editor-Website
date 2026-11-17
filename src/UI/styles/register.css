@@ -110,3 +110,51 @@ a:hover{
     text-decoration: underline;
     color: var(--primary-color-dark);
 }
+
+[hidden] {
+    display: none !important;
+}
+
+.form-hint {
+    margin: 0 0 16px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.form-message {
+    margin: 0 0 15px;
+    padding: 10px;
+    border-radius: 3px;
+    text-align: left;
+}
+
+.form-message.error {
+    background-color: #fdecea;
+    color: #b3261e;
+}
+
+.form-message.success {
+    background-color: #e8f5e9;
+    color: #1b5e20;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+a.cta-button {
+    display: block;
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 3px;
+    text-align: center;
+}
+
+a.cta-button:hover {
+    background-color: var(--primary-color-dark);
+    color: white;
+    text-decoration: none;
+}

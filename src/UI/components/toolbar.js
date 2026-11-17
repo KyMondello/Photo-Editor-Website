@@ -10,12 +10,32 @@ const TOOL_CONTROLS = {
         {key: 'saturation', label: 'Saturation', min: -100, max: 100, value: 0},
     ],
     blur: [
-        {key: 'amount', label: 'Blur', min: 0, max: 100, value: 0}
+        {key: 'blur', label: 'Blur', min: 0, max: 100, value: 0}
     ],
 };
 
+const FILTER_OPTIONS = [
+    
+    {key: 'Sepia', label: 'Sepia'},
+
+    
+    {key: 'Black&White', label: 'Black and White'},
+    
+    
+    {key: 'Gray', label: 'Grey'},
+    
+    
+    {key: 'NightVision', label: 'Night Vision'},
+    
+    
+    {key:'Warm', label:'Warm'},
+    
+    {key:'Cool', label:'Cool'}
+]
+
 const controls = document.getElementById('tool-controls');
 let activeTool = null;
+let activeFilter = null; // Track the currently active filter (shared by all filter buttons)
 
 function showToolControls(toolName) {
     activeTool = toolName;
@@ -26,6 +46,10 @@ function showToolControls(toolName) {
         button.classList.toggle('active', button.id === `tool-${toolName}`);
     });
 
+    if(toolName === 'filters'){
+        FILTER_OPTIONS.forEach(config => controls.appendChild(createFilterButton(toolName, config)));
+        return;
+    }
 
     const sliders = TOOL_CONTROLS[toolName];
     if(!sliders){
@@ -35,6 +59,11 @@ function showToolControls(toolName) {
 
     sliders.forEach(config => { controls.appendChild(createSlider(toolName, config)); });
 }
+
+document.addEventListener('canvas:loaded', () => {
+  if (activeTool) showToolControls(activeTool);   // rebuild sliders at defaults
+});
+
 
 function createSlider(toolName, {key, label, min, max, step=1, value, unit=''}) {
     const wrapper = document.createElement('label');
@@ -65,6 +94,25 @@ function createSlider(toolName, {key, label, min, max, step=1, value, unit=''}) 
     return wrapper;
 }
 
+
+function createFilterButton(toolName, {key,label}) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'filter-button';
+    button.textContent = label;
+    button.dataset.tool = toolName;
+    button.dataset.key = key;
+    button.addEventListener('click', () => {
+        //filters change the pixels permanently, so every click applies (undo reverts)
+        activeFilter = key;
+        controls.querySelectorAll('.filter-button').forEach(b =>
+            b.classList.toggle('active', b.dataset.key === activeFilter));
+        document.dispatchEvent(new CustomEvent('filter:apply', {
+            detail: {tool: toolName, key, active: true}
+        }));
+    });
+    return button;
+}
 function emit(eventName, tool, key, value) {
     document.dispatchEvent(new CustomEvent(eventName, { detail: { tool, key, value: Number(value) } }));
 }

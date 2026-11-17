@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - Anchor Edit</title>
+    <link rel="stylesheet" href="../src/UI/styles/global.css">
+    <link rel="stylesheet" href="../src/UI/styles/register.css">
+    <link rel="icon" type="image/png" href="../src/UI/images/simple-logo.png">
+</head>
+
+<body>
+    <div class="register-container">
+        <div class="logo">
+            <img src="../src/UI/images/simple-logo.png" alt="Anchor Edit Logo">
+            <span id="home-link"><a href="index.html" class="home-link">Anchor Edit</a></span>
+        </div>
+        <h2>Reset Password</h2>
+
+        <!-- Step 1: identify the account -->
+        <form id="verify-form" novalidate>
+            <p class="form-hint">Enter the username and email associated with your account.</p>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" autocomplete="username" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" autocomplete="email" required>
+
+            <p class="form-message error" id="verify-error" role="alert" hidden></p>
+
+            <button class="cta-button" type="submit" id="verify-submit">Continue</button>
+        </form>
+
+        <!-- Step 2: shown only after the backend confirms the account -->
+        <form id="new-password-form" novalidate hidden>
+            <p class="form-hint">Account verified. Choose a new password.</p>
+
+            <label for="new-password">New Password:</label>
+            <input type="password" id="new-password" name="new-password" placeholder="Enter your new password" autocomplete="new-password" required>
+
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your new password" autocomplete="new-password" required>
+
+            <p class="form-message error" id="password-error" role="alert" hidden></p>
+
+            <button class="cta-button" type="submit" id="password-submit">Update Password</button>
+        </form>
+
+        <!-- Step 3: password updated -->
+        <div id="success-panel" hidden>
+            <p class="form-message success" role="status">Your password has been updated.</p>
+            <a class="cta-button" href="login.html">Back to Login</a>
+        </div>
+
+        <p id="login-prompt">Remembered your password? <a href="login.html">Login here</a></p>
+    </div>
+
+    <script>
+        const verifyForm = document.getElementById('verify-form');
+        const newPasswordForm = document.getElementById('new-password-form');
+        const successPanel = document.getElementById('success-panel');
+        const loginPrompt = document.getElementById('login-prompt');
+
+        function showMessage(el, text) {
+            el.textContent = text;
+            el.hidden = false;
+        }
+
+        function clearMessage(el) {
+            el.textContent = '';
+            el.hidden = true;
+        }
+
+        function setBusy(button, busy, idleText, busyText) {
+            button.disabled = busy;
+            button.textContent = busy ? busyText : idleText;
+        }
+
+        // TODO (backend): resolve { ok: true } only if exactly one user matches
+        // this username AND email. Resolve { ok: false } otherwise.
+        async function verifyAccount(username, email) {
+            return { ok: true };
+        }
+
+        // TODO (backend): update the password for the account verified above.
+        // Resolve { ok: true } on success, { ok: false, message } on failure.
+        async function updatePassword(newPassword) {
+            return { ok: true };
+        }
+
+        verifyForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const error = document.getElementById('verify-error');
+            const button = document.getElementById('verify-submit');
+            clearMessage(error);
+
+            if (!verifyForm.checkValidity()) {
+                showMessage(error, 'Please enter a valid username and email.');
+                return;
+            }
+
+            setBusy(button, true, 'Continue', 'Checking...');
+            try {
+                const result = await verifyAccount(
+                    verifyForm.username.value.trim(),
+                    verifyForm.email.value.trim()
+                );
+                if (result.ok) {
+                    verifyForm.hidden = true;
+                    newPasswordForm.hidden = false;
+                    document.getElementById('new-password').focus();
+                } else {
+                    showMessage(error, 'We couldn’t find an account matching that username and email.');
+                }
+            } catch (err) {
+                showMessage(error, 'Something went wrong. Please try again.');
+            } finally {
+                setBusy(button, false, 'Continue', 'Checking...');
+            }
+        });
+
+        newPasswordForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const error = document.getElementById('password-error');
+            const button = document.getElementById('password-submit');
+            clearMessage(error);
+
+            const newPassword = newPasswordForm['new-password'].value;
+            const confirmPassword = newPasswordForm['confirm-password'].value;
+
+            if (!newPassword || !confirmPassword) {
+                showMessage(error, 'Please fill in both password fields.');
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                showMessage(error, 'Passwords do not match.');
+                return;
+            }
+
+            setBusy(button, true, 'Update Password', 'Updating...');
+            try {
+                const result = await updatePassword(newPassword);
+                if (result.ok) {
+                    newPasswordForm.hidden = true;
+                    loginPrompt.hidden = true;
+                    successPanel.hidden = false;
+                } else {
+                    showMessage(error, result.message || 'Could not update your password. Please try again.');
+                }
+            } catch (err) {
+                showMessage(error, 'Something went wrong. Please try again.');
+            } finally {
+                setBusy(button, false, 'Update Password', 'Updating...');
+            }
+        });
+    </script>
+</body>
+</html>
