@@ -41,7 +41,6 @@ export async function findUserByUsername(username) {
     .from("users")
     .select('id,username,email,hashed_password')
     .eq('username', username)
-    .limit(1)
     .single();
   if (error) return false;
   return data;
@@ -52,14 +51,13 @@ export async function findUserByEmail(email) {
     .from("users")
     .select('id,username,email,hashed_password')
     .eq('email', email)
-    .limit(1)
     .single();
   if (error) return false;
   return data;
 }
 
 export async function updatePassword(userId, hashedPassword) {
-  const { data, error } = await supabaseClient
+  const { error } = await supabaseClient
     .from("users")
     .update({ hashed_password: hashedPassword })
     .eq('id', userId)
