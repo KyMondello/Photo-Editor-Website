@@ -4,7 +4,7 @@
 
 const authService = require("./authService");
 const passwordResetService = require("./passwordResetService");
-const userQueries = require("../db/queries/userQueries");
+const userQueries = require("src/db/queries/userQueries");
 
 // Creates a new account.
 async function register(req, res) {
