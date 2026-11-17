@@ -7,7 +7,7 @@ import { getFilterString } from "./adjustments.js";
 const saveButton = document.getElementById('save-button');
 
 //Copy the visible canvas (all tool edits are already drawn on it) and bake in the slider filters
-function renderExport() {
+export function renderExport() {
     const source = getCanvas();
     const out = document.createElement('canvas');
     out.width = source.width;
