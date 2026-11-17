@@ -29,31 +29,33 @@ export async function createUser(username, email, hashedPassword) {
       username: username,
       email: email,
       hashed_password: hashedPassword
-    });
+    })
+    .select('id,username,email,hashed_password')
+    .single();
   if (error) return false;
-  return true;
+  return data;
 }
 
 export async function findUserByUsername(username) {
-  const { error } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from("users")
-    .select('username')
+    .select('id,username,email,hashed_password')
     .eq('username', username)
     .limit(1)
     .single();
   if (error) return false;
-  return true;
+  return data;
 }
 
 export async function findUserByEmail(email) {
-  const { error } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from("users")
-    .select('email')
+    .select('id,username,email,hashed_password')
     .eq('email', email)
     .limit(1)
     .single();
   if (error) return false;
-  return true;
+  return data;
 }
 
 export async function updatePassword(userId, hashedPassword) {
