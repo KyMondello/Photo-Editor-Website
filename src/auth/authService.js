@@ -6,7 +6,7 @@
 const jwt = require("jsonwebtoken");
 
 //database query functions.
-const userQueries = require("../db/queries/userQueries");
+const userQueries = require("src/db/queries/userQueries");
 
 //password functions.
 const {
