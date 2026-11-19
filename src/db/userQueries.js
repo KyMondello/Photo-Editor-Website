@@ -1,5 +1,5 @@
-import supabaseClient from "./supabase.js";
-
+import { randomUUID } from "node:crypto";
+import supabaseClient from "./supabaseServer.js";
 /**
  * Queries the database for a username, email combination
  * @param {string} username - The username of the account to reset
