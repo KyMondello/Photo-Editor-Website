@@ -1,17 +1,17 @@
 //authRoutes.js
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const {
+import {
     register,
     login,
     logout,
     getCurrentUser,
     requestPasswordReset,
     resetPassword
-} = require("./authController");
+} from "./authController.js";
 
-const { requireLogin } = require("./authMiddleware");
+import { requireLogin } from "./authMiddleware.js";
 
 // Create an account.
 router.post("/register", register);
@@ -31,4 +31,4 @@ router.post("/forgot-password", requestPasswordReset);
 // Set a new password using a verified recovery token.
 router.post("/reset-password", resetPassword);
 
-module.exports = router;
+export default router;
