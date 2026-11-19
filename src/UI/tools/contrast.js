@@ -2,7 +2,6 @@
 import { getCurrentImage } from '../components/canvas.js';
 import { getCanvasContext } from '../components/canvas.js';
 
-
 //get button element
 const button = document.getElementById('tool-contrast');
 
@@ -15,6 +14,9 @@ function changeContrast(val)
     //Get the current image data from the canvas
     const canvas = getCurrentImage();
     const ctx = getCanvasContext();
+
+    //preventing unseen by user errors
+    if(!canvas)return;
 
     //getting data from image
     const imgColor = ctx.getImageData(0,0,canvas.width, canvas.height);

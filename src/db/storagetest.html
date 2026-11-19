@@ -247,7 +247,7 @@
       const hashed_password = document.getElementById("create_hashedInput").value;
 
       const result = await createUser(username, email, hashed_password); // fix
-      alert(result);
+      console.log(result);
     })
     document.getElementById("findE").addEventListener("click", async () => {
       const email = document.getElementById("findE_emailInput").value;
@@ -257,7 +257,7 @@
     document.getElementById("findU").addEventListener("click", async () => {
       const username = document.getElementById("findU_usernameInput").value;
       const result = await findUserByUsername(username);
-      alert(result);
+      console.log(result);
     })
     document.getElementById("update").addEventListener("click", async () => {
       const id = document.getElementById("update_idInput").value;

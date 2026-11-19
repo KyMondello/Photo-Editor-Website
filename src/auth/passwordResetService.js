@@ -6,16 +6,16 @@
 //
 // The reset token is signed with JWT_SECRET plus the user's CURRENT password hash.
 
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 // database query functions.
-const userQueries = require("src/db/queries/userQueries");
+import * as userQueries from "../db/userQueries.js";
 
 // password functions.
-const { hashPassword } = require("./passwordService");
+import { hashPassword } from "./passwordService.js";
 
 // input validation.
-const { validatePassword } = require("./validation");
+import { validatePassword } from "./validation.js";
 
 const RESET_PURPOSE = "password-reset";
 const RESET_EXPIRES_IN = "10m";
@@ -40,7 +40,7 @@ function resetSecretFor(user) {
 }
 
 // Step 1: check the username and email, then create a reset token.
-async function requestReset(username, email) {
+export async function requestReset(username, email) {
     requireSecret();
 
     if (typeof username !== "string" || typeof email !== "string") {
@@ -73,7 +73,7 @@ async function requestReset(username, email) {
 }
 
 // Step 2: verify the reset token and save the new password.
-async function resetPassword(token, newPassword) {
+export async function resetPassword(token, newPassword) {
     requireSecret();
 
     const invalidSession = () =>
@@ -112,7 +112,10 @@ async function resetPassword(token, newPassword) {
 
     const hashedPassword = await hashPassword(newPassword);
 
-    await userQueries.updatePassword(user.id, hashedPassword);
-}
+    const updated = await userQueries.updatePassword(user.id, hashedPassword);
 
-module.exports = { requestReset, resetPassword };
+    // updatePassword returns false when the database update fails.
+    if (!updated) {
+        throw new Error("Password could not be saved.");
+    }
+}

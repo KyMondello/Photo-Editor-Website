@@ -1,9 +1,9 @@
 // authMiddleware.js
 // Checks whether a request has a valid login token.
 
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 // Checks whether a request has a valid login token.
-function requireLogin(req, res, next) {
+export function requireLogin(req, res, next) {
     // The server cannot verify tokens without its secret.
     if (!process.env.JWT_SECRET) {
         console.error("JWT_SECRET is not configured.");
@@ -23,7 +23,9 @@ function requireLogin(req, res, next) {
     }
     try {
         // Verify the signature and expiration.
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET, {
+            algorithms: ["HS256"]
+        });
 
         // Use the verified database user ID.
         req.user = {
@@ -37,5 +39,3 @@ function requireLogin(req, res, next) {
         });
     }
 }
-
-module.exports = { requireLogin };

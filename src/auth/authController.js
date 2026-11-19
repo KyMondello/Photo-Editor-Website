@@ -2,12 +2,12 @@
 //Receives authentication requests and sends
 //appropriate HTTP responses to the frontend.
 
-const authService = require("./authService");
-const passwordResetService = require("./passwordResetService");
-const userQueries = require("src/db/queries/userQueries");
+import * as authService from "./authService.js";
+import * as passwordResetService from "./passwordResetService.js";
+import * as userQueries from "../db/userQueries.js";
 
 // Creates a new account.
-async function register(req, res) {
+export async function register(req, res) {
     try {
         const { username, email, password } = req.body;
 
@@ -28,7 +28,7 @@ async function register(req, res) {
         });
     } 
     catch (error) {
-        if (error.code === "23505") {
+        if (error.code === "23505" || error.statusCode === 409) {
             return res.status(409).json({
                 message: "That username or email is already in use."
             });
@@ -49,7 +49,7 @@ async function register(req, res) {
 }
 
 // Authenticates a user and sets the login cookie.
-async function login(req, res) {
+export async function login(req, res) {
     try {
         const { username, password } = req.body;
 
@@ -81,7 +81,7 @@ async function login(req, res) {
 }
 
 // Clears the login cookie.
-function logout(req, res) {
+export function logout(req, res) {
     res.clearCookie("token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -95,7 +95,7 @@ function logout(req, res) {
 }
 
 // Returns information about the logged-in user.
-async function getCurrentUser(req, res) {
+export async function getCurrentUser(req, res) {
     try {
         const user = await userQueries.findUserById(req.user.id);
 
@@ -123,11 +123,20 @@ async function getCurrentUser(req, res) {
 
 // Starts password recovery.
 // Checks the username and email before starting password recovery.
-async function requestPasswordReset(req, res) {
+export async function requestPasswordReset(req, res) {
     try {
         const { username, email } = req.body;
 
-        await passwordResetService.requestReset(username, email);
+        const token = await passwordResetService.requestReset(username, email);
+
+        // Short-lived reset session, readable only by the server.
+        res.cookie("resetToken", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 10 * 60 * 1000,
+            path: "/api/auth"
+        });
 
         return res.json({
             message: "Account details verified."
@@ -141,14 +150,18 @@ async function requestPasswordReset(req, res) {
 }
 
 // Changes the password using a verified reset token.
-async function resetPassword(req, res) {
+export async function resetPassword(req, res) {
     try {
-        const { token, newPassword, confirmPassword } = req.body;
+        const { newPassword, confirmPassword } = req.body;
+        const token = req.cookies?.resetToken;
 
         if (newPassword !== confirmPassword) {
             return res.status(400).json({ message: "The passwords do not match."});
         }
         await passwordResetService.resetPassword(token, newPassword);
+
+        // The reset session is finished.
+        res.clearCookie("resetToken", { path: "/api/auth" });
 
         return res.json({ message: "Password changed successfully."});
     } 
@@ -165,5 +178,3 @@ async function resetPassword(req, res) {
         });
     }
 }
-
-module.exports = { register, login, logout, getCurrentUser, requestPasswordReset, resetPassword};

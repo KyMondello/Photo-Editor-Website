@@ -31,6 +31,9 @@ function filters(usrInput)
     //might need access to canvas itself
     const can = document.getElementById('photo-canvas');
 
+    //preventing unseen by user errors
+    if(!canvas)return;
+
     //make slightly warmer
     if(usrInput=='Warm')
     {
@@ -281,6 +284,8 @@ function filters(usrInput)
             //getting data from image
             const imgColor = ctx.getImageData(0,0,canvas.width, canvas.height);
             const colorData = imgColor.data
+
+            if(!canvas)return;
 
             //plus key = brighten
             if(pm == '+')
