@@ -2,7 +2,7 @@
 
 //import canvas functions
 import { getCurrentImage } from '../components/canvas.js';
-import { getCanvasContext } from '../components/canvas.js';
+import { getCanvasContext, getCanvas } from '../components/canvas.js';
 
 //Get the current image data from the canvas
     const canvas = getCurrentImage();
@@ -27,14 +27,27 @@ button.addEventListener('click', highlighter());
 //trying to get the coordinates of the mouse click, in reference to the canvas and not the whole page
 function trueCoordinates(x, y,ex,ey)
 {
-    const canvas = getCurrentImage();
+    const canvas = getCanvas(); //Kylie's change: get the canvas element from the canvas.js file
 
     var cRect = canvas.getBoundingClientRect();
+
+    const scaleX = canvas.width / cRect.width;
+    const scaleY = canvas.height / cRect.height;
+
+    
 
     //test purposes
     console.log(cRect.left, cRect.top, cRect.right, cRect.bottom);
     console.log("unchanged: " + x + ", " + y + ", " + ex + ", " + ey);
 
+    return{
+        x: (x - cRect.left) * scaleX,
+        y: (y - cRect.top) * scaleY,
+        ex: (ex - cRect.left) * scaleX,
+        ey: (ey - cRect.top) * scaleY
+    }
+    //Kylie's change: used a scale factor to account for the fact that the canvas is scaled down to fit the window. This should make the coordinates more accurate.
+    /*
     x = x - cRect.left;
     y = y - cRect.top;
     ex = ex - cRect.left;
@@ -43,7 +56,9 @@ function trueCoordinates(x, y,ex,ey)
     console.log("changed: " + x + ", " + y + ", " + ex + ", " + ey);
 
     return {x: x, y: y, ex: ex, ey: ey};
+    */
 }
+    
 
 function rect(startX, startY, endX, endY)
 {
@@ -57,14 +72,28 @@ function rect(startX, startY, endX, endY)
         ctx.lineWidth = 8;
 
         //test
+        /*
         startX = trueCoordinates(startX, startY, endX, endY).x;
         startY = trueCoordinates(startX, startY, endX, endY).y;
         endX = trueCoordinates(startX, startY, endX, endY).ex;
         endY = trueCoordinates(startX, startY, endX, endY).ey;
 
+        */
+
+        //Kylie's change: use the trueCoordinates function once,
+        // All values are read before being changed
+        const c = trueCoordinates(startX, startY, endX, endY);  
+        startX = c.x;
+        startY = c.y;
+        endX = c.ex;
+        endY = c.ey;
+        
         //draw from start coordinates to end coordinates
         //width and height are calculated by subtracting start coordinates from end coordinates
         ctx.strokeRect(startX, startY, endX - startX, endY - startY);
+
+        //strokeRect isn't watched by canvas.js, so tell history.js an edit happened
+        document.dispatchEvent(new CustomEvent('canvas:edited'));
 
 }
 
@@ -77,7 +106,7 @@ function highlighter()
 }
 
 //REMINDER: move into function at some point
-   document.addEventListener('click', function (event) 
+   getCanvas().addEventListener('click', function (event) 
 {
 
     //get starting coordinates
