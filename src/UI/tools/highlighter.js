@@ -16,6 +16,23 @@ import { getCanvasContext, getCanvas } from '../components/canvas.js';
     var endX = 0;
     var endY = 0;
 
+//currently selected highlighter color (set by the color buttons in toolbar.js)
+const HIGHLIGHT_COLORS = {
+    blue: '#0066ff',
+    green: '#00ff2a',
+    yellow: '#fff700',
+    red: '#ff2b00',
+    pink: '#ff5ea1'
+};
+let currentColor = HIGHLIGHT_COLORS.red; //Default color is red
+
+document.addEventListener('highlighter:apply', (e) => {
+    currentColor = HIGHLIGHT_COLORS[e.detail.key] || currentColor;
+    //mark the chosen button as active
+    document.querySelectorAll('#tool-controls .filter-button').forEach(b =>
+        b.classList.toggle('active', b.dataset.key === e.detail.key));
+});
+
 //get button element
 const button = document.getElementById('tool-highlighter');
 
@@ -68,7 +85,7 @@ function rect(startX, startY, endX, endY)
 
         //CHANGE LATER
         //Reuse these vars for highlighter
-        ctx.strokeStyle = 'red';
+        ctx.strokeStyle = currentColor;
         ctx.lineWidth = 8;
 
         //test

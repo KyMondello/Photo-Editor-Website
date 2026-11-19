@@ -47,6 +47,14 @@ const CROP_OPTIONS = [
     
 ];
 
+const HIGHLIGHTER_OPTIONS = [
+    {key: 'blue', label: 'Blue'},
+    {key: 'green', label: 'Green'},
+    {key: 'yellow', label: 'Yellow'},
+    {key: 'red', label: 'Red'},
+    {key: 'pink', label: 'Pink'},
+]
+
 
 const controls = document.getElementById('tool-controls');
 let activeTool = null;
@@ -68,6 +76,11 @@ function showToolControls(toolName) {
 
     if(toolName === 'crop'){
         CROP_OPTIONS.forEach(config => controls.appendChild(createCropButton(toolName, config)));
+        return;
+    }
+
+    if(toolName === 'highlighter'){
+        HIGHLIGHTER_OPTIONS.forEach(config => controls.appendChild(createHighlighterButton(toolName, config)));
         return;
     }
 
@@ -144,6 +157,21 @@ function createCropButton(toolName, {key, label, ratio, aspect}) {
     button.addEventListener('click', () => {
         document.dispatchEvent(new CustomEvent('crop:apply', {
             detail: {tool: toolName, key, ratio, aspect}
+        }));
+    });
+    return button;
+}
+
+function createHighlighterButton(toolName, {key,label}) {
+    const button = document.createElement('button');
+    button.type = 'button'; 
+    button.className = 'filter-button';
+    button.textContent = label;
+    button.dataset.tool = toolName;
+    button.dataset.key = key;
+    button.addEventListener('click', () => {
+        document.dispatchEvent(new CustomEvent('highlighter:apply', {
+            detail: {tool: toolName, key, active: true}
         }));
     });
     return button;
