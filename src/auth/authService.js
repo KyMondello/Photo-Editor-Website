@@ -3,19 +3,19 @@
 // Registration: Validate input check for existing account hash password
 // Login: Find username verify password create login token.
 
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 //database query functions.
-const userQueries = require("src/db/queries/userQueries");
+import * as userQueries from "../db/userQueries.js";
 
 //password functions.
-const {
+import {
     hashPassword,
     verifyPassword
-} = require("./passwordService");
+} from "./passwordService.js";
 
 // input validation.
-const {validateRegistration} = require("./validation");
+import { validateRegistration } from "./validation.js";
 
 // Creates an error that the controller can return as HTTP 409.
 function createConflictError(message) {
@@ -25,7 +25,7 @@ function createConflictError(message) {
 }
 
 // Register a new user.
-async function register(username, email, password) {
+export async function register(username, email, password) {
 
     // Validate the information first.
     validateRegistration(username, email, password);
@@ -52,10 +52,17 @@ async function register(username, email, password) {
     const hashedPassword = await hashPassword(password);
 
     // database layer inserts the new user and hashed password
-    return userQueries.createUser( username, email, hashedPassword);
+    const user = await userQueries.createUser(username, email, hashedPassword);
+
+    // createUser returns false when the insert fails.
+    if (!user) {
+        throw new Error("Could not create the account.");
+    }
+
+    return user;
 }
 // Log in using a username and password.
-async function login(username, password) {
+export async function login(username, password) {
     // Reject missing or incorrectly typed login information.
     if (
         typeof username !== "string" ||
@@ -107,6 +114,3 @@ async function login(username, password) {
         }
     };
 }
-
-// Make the functions available to authController.js.
-module.exports = {register, login};
