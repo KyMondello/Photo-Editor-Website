@@ -66,4 +66,14 @@ export async function updatePassword(userId, hashedPassword) {
   return true;
 }
 
+export async function findUserById(id) {
+  const { data, error } = await supabaseClient
+    .from("users")
+    .select('id,username,email')
+    .eq('id', id)
+    .single();
+  if (error) return false;
+  return data;
+}
+
 
