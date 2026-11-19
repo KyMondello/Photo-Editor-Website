@@ -11,7 +11,7 @@ function createValidationError(message) {
 }
 
 // Checks whether a password meets the project requirements.
-function validatePassword(password) {
+export function validatePassword(password) {
 
     if (typeof password !== "string") {
         throw createValidationError("Please enter a password.");
@@ -54,7 +54,7 @@ function validatePassword(password) {
 }
 
 // Checks the information provided during registration.
-function validateRegistration(username, email, password) {
+export function validateRegistration(username, email, password) {
 
     // Make sure a username was provided as a string.
     if (typeof username !== "string") {
@@ -88,9 +88,3 @@ function validateRegistration(username, email, password) {
     // Check the password using the shared password rules.
     validatePassword(password);
 }
-
-// Make the functions available to other backend files.
-module.exports = {
-    validateRegistration,
-    validatePassword
-};
