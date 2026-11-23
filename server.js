@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import authRoutes from "./src/auth/authRoutes.js";
+import imageRoutes from "./src/db/imageRoutes.js";
 
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
   console.error("Set JWT_SECRET (at least 32 characters) in .env before starting.");
@@ -33,6 +34,7 @@ app.use(
 );
 
 app.use("/api/auth", authRoutes);
+app.use("/api/images", imageRoutes);
 
 // Pages use paths like ../src/UI/..., change to /src/UI/... from /login.html.
 // Only the browser-side folders are served; src/auth stays private.
