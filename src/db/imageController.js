@@ -93,7 +93,8 @@ export async function uploadImageProject(req, res) {
   }
 
   return res.status(200).json({
-    message: "Image uploaded."
+    message: "Image uploaded.",
+    imageId: result.data.imageId
   });
 }
 

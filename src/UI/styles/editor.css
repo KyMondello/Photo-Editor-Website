@@ -268,3 +268,78 @@
     overflow-x: auto;
   }
 }
+
+/* --- Account menu (navbar) --- */
+[hidden] { display: none !important; }
+
+/* Hidden until accountMenu.js knows whether the user is logged in (avoids a Login-link flash). */
+.editor-auth { visibility: hidden; }
+
+.account-menu { position: relative; }
+
+#account-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.account-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 200px;
+  list-style: none;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+.account-dropdown button {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.account-dropdown button:hover:not(:disabled) { background: var(--bg-secondary); }
+.account-dropdown button:disabled { color: var(--text-muted); cursor: not-allowed; }
+
+/* --- Load saved image dialog --- */
+.load-dialog {
+  min-width: 320px;
+  max-height: 70vh;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow-y: auto;
+}
+
+.load-dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
+.load-dialog h2 { margin-bottom: 12px; }
+.load-dialog p { margin-bottom: 8px; color: var(--text-muted); }
+.load-dialog ul { list-style: none; margin-bottom: 12px; }
+
+.load-dialog li button {
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.load-dialog li button:hover { border-color: var(--primary-color); }

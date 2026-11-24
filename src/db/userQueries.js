@@ -32,7 +32,10 @@ export async function createUser(username, email, hashedPassword) {
     })
     .select('id,username,email,hashed_password')
     .single();
-  if (error) return false;
+  if (error) {
+    console.error("createUser insert failed:", error.code, error.message);
+    return false;
+  }
   return data;
 }
 

@@ -11,7 +11,7 @@ form.addEventListener("submit", async function (event) {
 
     // Read the new password and its confirmation.
     const newPassword = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
 
     if (!newPassword || !confirmPassword) {
         message.textContent = "Please enter and confirm a new password.";
@@ -24,7 +24,7 @@ form.addEventListener("submit", async function (event) {
     }
 
     try {
-        const response = await fetch("/api/auth/password-reset", {
+        const response = await fetch("/api/auth/reset-password", {
             //information to the server
             method: "POST",
             // Tell Express that the body is JSON
