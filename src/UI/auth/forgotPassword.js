@@ -20,7 +20,7 @@ form.addEventListener("submit", async function (event) {
 
     try {
         // Send the account information to the backend.
-        const response = await fetch("/api/auth/forgotPassword", {
+        const response = await fetch("/api/auth/forgot-password", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

@@ -32,25 +32,45 @@ function handleImageUpload(event) {
   }
   
 
-  const reader = new FileReader();
+  loadImageFromBlob(file, 'local').catch(err => alert(err.message));
+  event.target.value = ''; // Reset the input so the same file can be re-uploaded if needed
+}
 
-  reader.onload = (e) => {
+// Draws any image Blob/File onto the canvas and tells the other components.
+// source: 'local' for a file picked from disk, 'account' for one loaded from the user's account.
+// Resolves once the image is on the canvas, rejects if the data is not a readable image.
+export function loadImageFromBlob(blob, source = 'local') {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
     const img = new Image();
 
     img.onload = () => {
+      URL.revokeObjectURL(url);
       currentImage = img;
       hasEdits = false;   // new image, no edits yet
       drawImageToCanvas(img);
       showCanvas();
       // history.js listens for this to reset the undo/redo stacks
-      document.dispatchEvent(new CustomEvent('canvas:loaded'));
+      document.dispatchEvent(new CustomEvent('canvas:loaded', { detail: { source } }));
+      resolve(img);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('That file could not be read as an image.'));
     };
 
-    img.src = e.target.result;
-  };
+    img.src = url;
+  });
+}
 
-  reader.readAsDataURL(file);
-  event.target.value = ''; // Reset the input so the same file can be re-uploaded if needed
+// True when the user changed the image since it was loaded or last saved.
+export function hasUnsavedEdits() {
+  return hasEdits;
+}
+
+// Call after the image is safely saved (e.g. to the user's account).
+export function markSaved() {
+  hasEdits = false;
 }
 
 function drawImageToCanvas(img) {

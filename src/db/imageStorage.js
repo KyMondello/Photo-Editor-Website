@@ -21,7 +21,7 @@ import { randomUUID } from "node:crypto"
  * @param {string} userId - The user's UUID.
  * @param {Blob} imageData - The actual image data to be uploaded.
  * @param {string} filename - The image file's name and extension.
- * @returns {Promise<SupabaseResponse<null>>}
+ * @returns {Promise<SupabaseResponse<{imageId: string}>>}
  */
 export async function uploadProject(userId, imageData, filename) {
   const imageId = randomUUID();
@@ -60,7 +60,7 @@ export async function uploadProject(userId, imageData, filename) {
 
   if (versionTableError) return failure("Could not add record to versions table.");
 
-  return success();
+  return success({ imageId });
 }
 
 /**
